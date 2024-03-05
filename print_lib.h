@@ -1,4 +1,7 @@
 
+void print_put(const char *, size_t)
+  __attribute__((weak));
+
 void print_notice(const char *, ...)
   __attribute__((format(printf, 1, 2)));
 

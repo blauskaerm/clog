@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdarg.h>
+#include "print_lib.h"
 
 #define COLOR_YELLOW "\033[93m"
 #define COLOR_GREEN  "\033[92m"
@@ -28,22 +29,24 @@
 #define SEVERITY_ERROR   MSG_ERROR
 #endif
 
-static void print_status(const char *severity, const char *fmt, va_list list) {
+#define MSG_BUF_SZ 1024
+
+static void print_vmsg(const char *severity, const char *fmt, va_list list) {
 
   ssize_t res;
-  char fmt_buf[64];
-  char print_buf[200];
+  char fmt_buf[MSG_BUF_SZ];
+  char msg_buf[MSG_BUF_SZ];
 
   res = snprintf(fmt_buf, sizeof(fmt_buf), "%s: %s", severity, fmt);
   if (res <= 0 || (size_t) res >= sizeof(fmt_buf)) {
     (void)snprintf(fmt_buf, sizeof(fmt_buf), "FMT OVERFLOW\n");
   }
-  res = vsnprintf(print_buf, sizeof(print_buf), fmt_buf, list);
-  if (res <= 0 || (size_t) res >= sizeof(print_buf)) {
-    (void)snprintf(print_buf, sizeof(print_buf), "PRINT OVERFLOW\n");
+  res = vsnprintf(msg_buf, sizeof(msg_buf), fmt_buf, list);
+  if (res <= 0 || (size_t) res >= sizeof(msg_buf)) {
+    (void)snprintf(msg_buf, sizeof(msg_buf), "PRINT OVERFLOW\n");
   }
 
-  printf("%s", print_buf);
+  print_put(msg_buf, res);
 }
 
 void print_debug(const char *fmt, ...) {
@@ -51,7 +54,7 @@ void print_debug(const char *fmt, ...) {
   va_list list;
 
   va_start(list, fmt);
-  print_status(SEVERITY_DEBUG, fmt, list);
+  print_vmsg(SEVERITY_DEBUG, fmt, list);
   va_end(list);
 }
 
@@ -60,7 +63,7 @@ void print_info(const char *fmt, ...) {
   va_list list;
 
   va_start(list, fmt);
-  print_status(SEVERITY_INFO, fmt, list);
+  print_vmsg(SEVERITY_INFO, fmt, list);
   va_end(list);
 }
 
@@ -69,7 +72,7 @@ void print_warning(const char *fmt, ...) {
   va_list list;
 
   va_start(list, fmt);
-  print_status(SEVERITY_WARNING, fmt, list);
+  print_vmsg(SEVERITY_WARNING, fmt, list);
   va_end(list);
 }
 
@@ -78,7 +81,7 @@ void print_error(const char *fmt, ...) {
   va_list list;
 
   va_start(list, fmt);
-  print_status(SEVERITY_ERROR, fmt, list);
+  print_vmsg(SEVERITY_ERROR, fmt, list);
   va_end(list);
 }
 
@@ -87,6 +90,11 @@ void print_notice(const char *fmt, ...) {
   va_list list;
 
   va_start(list, fmt);
-  print_status(SEVERITY_NOTICE, fmt, list);
+  print_vmsg(SEVERITY_NOTICE, fmt, list);
   va_end(list);
+}
+
+void print_put(const char *buf, size_t buf_sz) {
+  printf("%s", buf);
+  (void)buf_sz;
 }
