@@ -1,30 +1,40 @@
 
 CC ?= gcc
 
-CDEFS += -DCLOG_LIB_COLOR
+ifeq ($(CLOG_LOG_COLOR),y)
+CDEFS += -DCLOG_LOG_COLOR
+endif
+
+ifdef ($(CLOG_DISABLE_SYSLOG),y)
 CDEFS += -DCLOG_DISABLE_SYSLOG
-CDEFS += -DCLOG_MSG_BUF_SZ=1024
-CDEFS += -DCLOG_LOG_LEVEL=5
+endif
+
+ifdef CLOG_MSG_BUF_SZ
+CDEFS += -DCLOG_MSG_BUF_SZ=$(CLOG_MSG_BUF_SZ)
+endif
+
+ifdef CLOG_LOG_LEVEL
+CDEFS += -DCLOG_LOG_LEVEL=$(CLOG_LOG_LEVEL)
+endif
 
 CFLAGS ?= -O2 -pedantic -Wall -Werror -flto
 CFLAGS += $(CDEFS)
 
-OUT = test_clog_lib
-SRC = clog.c clog_lib.c
+SRC = clog.c
 OBJ = $(patsubst %.c, %.o, $(SRC))
-LIB = libcloglib.a
+LIB = libclog.a
 
-all: $(OUT) $(LIB)
+all: $(LIB)
 
 $(LIB): $(OBJ)
 	ar -cr $@ $(OBJ)
 
-$(OUT): $(LIB)
-	$(CC) $(CFLAGS) -L. -o $@ clog.c -lcloglib
+demo: $(LIB)
+	$(CC) $(CFLAGS) -L. -o $@ demo.c -lclog
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $^
 
 .PHONY: clean
 clean:
-	rm -rf $(OUT) $(OBJ) $(LIB)
+	rm -rf demo $(OBJ) $(LIB)

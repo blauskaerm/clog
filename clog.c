@@ -20,7 +20,7 @@
 #define MSG_DEBUG   "  DEBUG"
 #define MSG_ERROR   "  ERROR"
 
-#ifdef CLOG_LIB_COLOR
+#ifdef CLOG_LOG_COLOR
 #define SEVERITY_WARNING COLOR_YELLOW MSG_WARNING COLOR_RESET
 #define SEVERITY_NOTICE  COLOR_GREEN  MSG_NOTICE  COLOR_RESET
 #define SEVERITY_INFO    COLOR_BLUE   MSG_INFO    COLOR_RESET
@@ -120,6 +120,9 @@ static void clog_vmsg(const enum clog_severity severity,
     break;
   case CLOG_ERROR:
     syslog_priority = LOG_ERR;
+    break;
+  case CLOG_NONE:
+    (void)syslog_priority;
     break;
   }
 
