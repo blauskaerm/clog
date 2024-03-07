@@ -12,13 +12,14 @@ CFLAGS += $(CDEFS)
 OUT = test_print_lib
 SRC = print.c print_lib.c
 OBJ = $(patsubst %.c, %.o, $(SRC))
+LIB = libprintlib.a
 
-all: $(OUT) libprintlib.a
+all: $(OUT) $(LIB)
 
-libprintlib.a: $(OBJ)
+$(LIB): $(OBJ)
 	ar -cr $@ $(OBJ)
 
-$(OUT): libprintlib.a
+$(OUT): $(LIB)
 	$(CC) $(CFLAGS) -L. -o $@ print.c -lprintlib
 
 %.o: %.c
@@ -26,4 +27,4 @@ $(OUT): libprintlib.a
 
 .PHONY: clean
 clean:
-	rm -rf $(OUT) $(OBJ)
+	rm -rf $(OUT) $(OBJ) $(LIB)
