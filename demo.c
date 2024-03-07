@@ -1,16 +1,16 @@
 #include <stddef.h>
-#include "print_lib.h"
+#include "clog.h"
 
 int main(void) {
 
-  print_open(NULL);
+  clog_open(NULL);
 
-  print_debug("Hello world\n");
-  print_info("Hello world\n");
-  print_notice("Hello world\n");
-  print_warning("Hello world\n");
-  print_error("Hello world\n");
-  print_print("  Print: Hello world\n");
+  clog_debug("Hello world\n");
+  clog_info("Hello world\n");
+  clog_notice("Hello world\n");
+  clog_warning("Hello world\n");
+  clog_error("Hello world\n");
+  clog_print("  Print: Hello world\n");
 
-  print_close();
+  clog_close();
 }
