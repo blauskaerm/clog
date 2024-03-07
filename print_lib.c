@@ -49,6 +49,13 @@ enum print_severity {
 #define MSG_BUF_SZ 1024
 #endif
 
+#ifdef PRINT_LOG_LEVEL
+#define LOG_LEVEL PRINT_LOG_LEVEL
+#else
+#define LOG_LEVEL 5
+#endif
+
+#if LOG_LEVEL >= 1
 static void print_vmsg(const enum print_severity severity,
                        const char *fmt,
                        va_list list) {
@@ -125,76 +132,106 @@ static void print_vmsg(const enum print_severity severity,
 
   print_put(out_ptr, res);
 }
+#endif
 
 void print_open(const char *ident) {
+#if LOG_LEVEL >= 1
 #ifndef PRINT_DISABLE_SYSLOG
   openlog(ident, LOG_PID, LOG_USER);
+#else
+  (void)ident;
+#endif
 #else
   (void)ident;
 #endif
 }
 
 void print_close(void) {
+#if LOG_LEVEL >= 1
 #ifndef PRINT_DISABLE_SYSLOG
   closelog();
+#endif
 #endif
 }
 
 void print_debug(const char *fmt, ...) {
-
+#if LOG_LEVEL >= 5
   va_list list;
 
   va_start(list, fmt);
   print_vmsg(PRINT_DEBUG, fmt, list);
   va_end(list);
-}
-
-void print_info(const char *fmt, ...) {
-
-  va_list list;
-
-  va_start(list, fmt);
-  print_vmsg(PRINT_INFO, fmt, list);
-  va_end(list);
-}
-
-void print_warning(const char *fmt, ...) {
-
-  va_list list;
-
-  va_start(list, fmt);
-  print_vmsg(PRINT_WARNING, fmt, list);
-  va_end(list);
-}
-
-void print_error(const char *fmt, ...) {
-
-  va_list list;
-
-  va_start(list, fmt);
-  print_vmsg(PRINT_ERROR, fmt, list);
-  va_end(list);
+#else
+  (void)fmt;
+#endif
 }
 
 void print_notice(const char *fmt, ...) {
-
+#if LOG_LEVEL >= 4
   va_list list;
 
   va_start(list, fmt);
   print_vmsg(PRINT_NOTICE, fmt, list);
   va_end(list);
+#else
+  (void)fmt;
+#endif
+}
+
+void print_info(const char *fmt, ...) {
+#if LOG_LEVEL >= 3
+  va_list list;
+
+  va_start(list, fmt);
+  print_vmsg(PRINT_INFO, fmt, list);
+  va_end(list);
+#else
+  (void)fmt;
+#endif
+}
+
+void print_warning(const char *fmt, ...) {
+#if LOG_LEVEL >= 2
+  va_list list;
+
+  va_start(list, fmt);
+  print_vmsg(PRINT_WARNING, fmt, list);
+  va_end(list);
+#else
+  (void)fmt;
+#endif
+}
+
+void print_error(const char *fmt, ...) {
+#if LOG_LEVEL >= 1
+  va_list list;
+
+  va_start(list, fmt);
+  print_vmsg(PRINT_ERROR, fmt, list);
+  va_end(list);
+#else
+  (void)fmt;
+#endif
 }
 
 void print_print(const char *fmt, ...) {
-
+#if LOG_LEVEL > 0
   va_list list;
 
   va_start(list, fmt);
   print_vmsg(PRINT_NONE, fmt, list);
   va_end(list);
+#else
+  (void)fmt;
+#endif
 }
 
 void print_put(const char *buf, size_t buf_sz) {
+#if LOG_LEVEL > 0
   printf("%s", buf);
   (void)buf_sz;
+#else
+  (void)buf;
+  (void)buf_sz;
+#endif
 }

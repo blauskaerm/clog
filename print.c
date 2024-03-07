@@ -10,7 +10,7 @@ int main(void) {
   print_notice("Hello world\n");
   print_warning("Hello world\n");
   print_error("Hello world\n");
-  print_print("\nHello world\n\n");
+  print_print("  Print: Hello world\n");
 
   print_close();
 }
