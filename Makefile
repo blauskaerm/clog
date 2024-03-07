@@ -1,15 +1,24 @@
 
 CC ?= gcc
-CFLAGS ?= -O2 -pedantic -Wall -Werror -DPRINT_LIB_COLOR
+
+CDEFS += -DPRINT_LIB_COLOR
+CDEFS += -DPRINT_DISABLE_SYSLOG
+CDEFS += -DPRINT_MSG_BUF_SZ=1024
+
+CFLAGS ?= -O2 -pedantic -Wall -Werror
+CFLAGS += $(CDEFS)
 
 OUT = test_print_lib
 SRC = print.c print_lib.c
 OBJ = $(patsubst %.c, %.o, $(SRC))
 
-all: $(OUT)
+all: $(OUT) libprintlib.a
 
-$(OUT): $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $(OBJ)
+libprintlib.a: $(OBJ)
+	ar -cr $@ $(OBJ)
+
+$(OUT): libprintlib.a
+	$(CC) $(CFLAGS) -L. -o $@ print.c -lprintlib
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $^

@@ -17,5 +17,8 @@ void print_info(const char *, ...)
 void print_debug(const char *, ...)
   __attribute__((format(printf, 1, 2)));
 
+void print_print(const char *, ...)
+  __attribute__((format(printf, 1, 2)));
+
 void print_open(const char *);
 void print_close(void);
