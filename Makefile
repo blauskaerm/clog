@@ -5,7 +5,7 @@ ifeq ($(CLOG_LOG_COLOR),y)
 CDEFS += -DCLOG_LOG_COLOR
 endif
 
-ifdef ($(CLOG_DISABLE_SYSLOG),y)
+ifeq ($(CLOG_DISABLE_SYSLOG),y)
 CDEFS += -DCLOG_DISABLE_SYSLOG
 endif
 
