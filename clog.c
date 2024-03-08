@@ -90,12 +90,24 @@ static void clog_vmsg(const enum clog_severity severity,
 
   res = vsnprintf(msg_buf, sizeof(msg_buf), fmt, list);
   if (res <= 0 || (size_t) res >= sizeof(msg_buf)) {
-    (void)snprintf(msg_buf, sizeof(msg_buf), "CLOG OVERFLOW\n");
+
+    if (res <= 0) {
+      return;
+    }
+    if ((size_t) res >= sizeof(msg_buf)) {
+      // Truncate output
+      msg_buf[sizeof(msg_buf) - 1] = '\0';
+    }
   }
   if (severity != CLOG_NONE) {
     res = snprintf(out_buf, sizeof(out_buf), "%s: %s", severity_str, msg_buf);
-    if (res <= 0 || (size_t) res >= sizeof(out_buf)) {
-      (void)snprintf(out_buf, sizeof(out_buf), "FMT OVERFLOW\n");
+
+    if (res <= 0) {
+      return;
+    }
+    if ((size_t) res >= sizeof(out_buf)) {
+      // Truncate output
+      out_buf[sizeof(out_buf) - 1] = '\0';
     }
     out_ptr = out_buf;
   }
