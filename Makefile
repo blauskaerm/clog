@@ -1,5 +1,6 @@
 
 CC ?= gcc
+AR ?= ar
 
 ifeq ($(CLOG_LOG_COLOR),y)
 CDEFS += -DCLOG_LOG_COLOR
@@ -17,7 +18,7 @@ ifdef CLOG_LOG_LEVEL
 CDEFS += -DCLOG_LOG_LEVEL=$(CLOG_LOG_LEVEL)
 endif
 
-CFLAGS ?= -O2 -pedantic -Wall -Werror -flto
+CFLAGS ?= -O2 -pedantic -Wall -Wextra -Werror
 CFLAGS += $(CDEFS)
 
 SRC = clog.c
@@ -27,7 +28,7 @@ LIB = libclog.a
 all: $(LIB)
 
 $(LIB): $(OBJ)
-	ar -cr $@ $(OBJ)
+	$(AR) -cr $@ $(OBJ)
 
 demo: $(LIB)
 	$(CC) $(CFLAGS) -L. -o $@ demo.c -lclog

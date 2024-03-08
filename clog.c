@@ -133,7 +133,7 @@ static void clog_vmsg(const enum clog_severity severity,
   (void)syslog_priority;
 #endif
 
-  clog_put(out_ptr, res);
+  clog_put(out_ptr, (size_t) res);
 }
 #endif
 
