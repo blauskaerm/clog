@@ -18,7 +18,7 @@ ifdef CLOG_LOG_LEVEL
 CDEFS += -DCLOG_LOG_LEVEL=$(CLOG_LOG_LEVEL)
 endif
 
-CFLAGS ?= -O2 -pedantic -Wall -Wextra -Werror
+CFLAGS ?= -std=c99 -O2 -pedantic -Wall -Wextra -Werror
 CFLAGS += $(CDEFS)
 
 SRC = clog.c

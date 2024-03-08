@@ -1,3 +1,5 @@
+#ifndef _CLOG_
+#define _CLOG_
 
 void clog_debug(const char *, ...)
   __attribute__((format(printf, 1, 2)));
@@ -22,3 +24,5 @@ void clog_put(const char *, size_t)
 
 void clog_open(const char *);
 void clog_close(void);
+
+#endif

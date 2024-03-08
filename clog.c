@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdarg.h>
+#include <sys/types.h>
 
 #ifndef CLOG_DISABLE_SYSLOG
 #include <syslog.h>
