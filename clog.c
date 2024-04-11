@@ -61,7 +61,7 @@ static void clog_vmsg(const enum clog_severity severity,
                        const char *fmt,
                        va_list list) {
 
-  ssize_t res;
+  int res;
   char *out_ptr;
   char out_buf[MSG_BUF_SZ];
   char msg_buf[MSG_BUF_SZ];
@@ -98,6 +98,7 @@ static void clog_vmsg(const enum clog_severity severity,
     if ((size_t) res >= sizeof(msg_buf)) {
       // Truncate output
       msg_buf[sizeof(msg_buf) - 1] = '\0';
+      res = sizeof(out_buf) - 1;
     }
   }
   if (severity != CLOG_NONE) {
@@ -109,6 +110,7 @@ static void clog_vmsg(const enum clog_severity severity,
     if ((size_t) res >= sizeof(out_buf)) {
       // Truncate output
       out_buf[sizeof(out_buf) - 1] = '\0';
+      res = sizeof(out_buf) - 1;
     }
     out_ptr = out_buf;
   }
