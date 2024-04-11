@@ -1,6 +1,9 @@
 # CLog
 
-Clog is a simple logging library written in C.
+Clog is a simple logging library written in C. The build procedure produces a
+library that your project can link against. Features that are included in the
+library can be controlled by setting environment variables from your top make
+file. The table below describes implemented variables.
 
 | Environment variable | Description                                     | Value   | Default |
 |----------------------|-------------------------------------------------|---------|---------|
@@ -25,8 +28,8 @@ environment variable `CLOG_LOG_LEVEL` during compile time. See table below.
 
 # Embedded applications
 
-Its possible to use clog in embedded applications. The library depends on
-`snprintf()` so newlib or other library is requiered.
+It's possible to use clog in embedded applications. The library depends on
+`snprintf()` so newlib or similar library is required.
 
 Disable syslog integration by setting environment variable `CLOG_DISABLE_SYSLOG`
 to "y".
