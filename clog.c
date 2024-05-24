@@ -35,28 +35,13 @@
 #define SEVERITY_ERROR   MSG_ERROR
 #endif
 
-enum clog_severity {
-  CLOG_WARNING,
-  CLOG_NOTICE,
-  CLOG_INFO,
-  CLOG_DEBUG,
-  CLOG_ERROR,
-  CLOG_NONE,
-};
-
 #ifdef CLOG_MSG_BUF_SZ
 #define MSG_BUF_SZ CLOG_MSG_BUF_SZ
 #else
 #define MSG_BUF_SZ 1024
 #endif
 
-#ifdef CLOG_LOG_LEVEL
-#define LOG_LEVEL CLOG_LOG_LEVEL
-#else
-#define LOG_LEVEL 5
-#endif
-
-#if LOG_LEVEL >= 1
+#if _CLOG_LOG_LEVEL >= 1
 static void clog_vmsg(const enum clog_severity severity,
                        const char *fmt,
                        va_list list) {
@@ -85,7 +70,8 @@ static void clog_vmsg(const enum clog_severity severity,
     severity_str = SEVERITY_ERROR;
     break;
   case CLOG_NONE:
-    (void)severity_str;
+  default:
+    severity_str = "";
     break;
   }
 
@@ -137,7 +123,8 @@ static void clog_vmsg(const enum clog_severity severity,
     syslog_priority = LOG_ERR;
     break;
   case CLOG_NONE:
-    (void)syslog_priority;
+  default:
+    syslog_priority = 0;
     break;
   }
 
@@ -152,8 +139,22 @@ static void clog_vmsg(const enum clog_severity severity,
 }
 #endif
 
+void clog_msg(const enum clog_severity severity,
+              const char *fmt, ...) {
+#if _CLOG_LOG_LEVEL > 0
+  va_list list;
+
+  va_start(list, fmt);
+  clog_vmsg(severity, fmt, list);
+  va_end(list);
+#else
+  (void)severity;
+  (void)fmt;
+#endif
+}
+
 void clog_open(const char *ident) {
-#if LOG_LEVEL >= 1
+#if _CLOG_LOG_LEVEL >= 1
 #ifndef CLOG_DISABLE_SYSLOG
   openlog(ident, LOG_PID, LOG_USER);
 #else
@@ -165,87 +166,15 @@ void clog_open(const char *ident) {
 }
 
 void clog_close(void) {
-#if LOG_LEVEL >= 1
+#if _CLOG_LOG_LEVEL >= 1
 #ifndef CLOG_DISABLE_SYSLOG
   closelog();
 #endif
 #endif
 }
 
-void clog_debug(const char *fmt, ...) {
-#if LOG_LEVEL >= 5
-  va_list list;
-
-  va_start(list, fmt);
-  clog_vmsg(CLOG_DEBUG, fmt, list);
-  va_end(list);
-#else
-  (void)fmt;
-#endif
-}
-
-void clog_notice(const char *fmt, ...) {
-#if LOG_LEVEL >= 4
-  va_list list;
-
-  va_start(list, fmt);
-  clog_vmsg(CLOG_NOTICE, fmt, list);
-  va_end(list);
-#else
-  (void)fmt;
-#endif
-}
-
-void clog_info(const char *fmt, ...) {
-#if LOG_LEVEL >= 3
-  va_list list;
-
-  va_start(list, fmt);
-  clog_vmsg(CLOG_INFO, fmt, list);
-  va_end(list);
-#else
-  (void)fmt;
-#endif
-}
-
-void clog_warning(const char *fmt, ...) {
-#if LOG_LEVEL >= 2
-  va_list list;
-
-  va_start(list, fmt);
-  clog_vmsg(CLOG_WARNING, fmt, list);
-  va_end(list);
-#else
-  (void)fmt;
-#endif
-}
-
-void clog_error(const char *fmt, ...) {
-#if LOG_LEVEL >= 1
-  va_list list;
-
-  va_start(list, fmt);
-  clog_vmsg(CLOG_ERROR, fmt, list);
-  va_end(list);
-#else
-  (void)fmt;
-#endif
-}
-
-void clog_print(const char *fmt, ...) {
-#if LOG_LEVEL > 0
-  va_list list;
-
-  va_start(list, fmt);
-  clog_vmsg(CLOG_NONE, fmt, list);
-  va_end(list);
-#else
-  (void)fmt;
-#endif
-}
-
 void clog_put(const char *buf, size_t buf_sz) {
-#if LOG_LEVEL > 0
+#if _CLOG_LOG_LEVEL > 0
   printf("%s", buf);
   (void)buf_sz;
 #else
